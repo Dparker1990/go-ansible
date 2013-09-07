@@ -1,11 +1,12 @@
 package main
 
 import (
+	"container/list"
 	"log"
 	"net"
 )
 
-func handleConnection(connection net.Conn, connections *[]net.Conn) {
+func handleConnection(connection net.Conn, connections *list.List) {
 	var conn net.Conn
 	msg := make([]byte, 1024)
 
@@ -16,8 +17,8 @@ func handleConnection(connection net.Conn, connections *[]net.Conn) {
 		}
 		log.Printf("Message received: %s", string(msg))
 
-		for i := range *connections {
-			conn = (*connections)[i]
+		for c := (*connections).Front(); c != nil; c = c.Next() {
+			conn = c.Value.(net.Conn)
 			if conn != connection {
 				if _, err := conn.Write(msg); err != nil {
 					log.Fatal("Writing failed")
@@ -28,7 +29,7 @@ func handleConnection(connection net.Conn, connections *[]net.Conn) {
 }
 
 func main() {
-	connections := make([]net.Conn, 0, 100000)
+	connections := list.New()
 	server, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatal("Could not listen")
@@ -42,8 +43,8 @@ func main() {
 		}
 		log.Printf("Connection received from: %s", connection.RemoteAddr().String())
 
-		connections = append(connections, connection)
+		connections.PushBack(connection)
 
-		go handleConnection(connection, &connections)
+		go handleConnection(connection, connections)
 	}
 }
