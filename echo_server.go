@@ -2,6 +2,8 @@ package main
 
 import (
 	"container/list"
+	"flag"
+	"fmt"
 	"log"
 	"net"
 )
@@ -38,7 +40,7 @@ func handleConnection(connection net.Conn, connections *list.List) {
 	}
 }
 
-func main() {
+func runServer() {
 	connections := list.New()
 	server, err := net.Listen("tcp", ":8080")
 	if err != nil {
@@ -56,5 +58,49 @@ func main() {
 		connections.PushBack(connection)
 
 		go handleConnection(connection, connections)
+	}
+}
+
+func runClient() {
+	var username string
+	var msg []byte
+
+	fmt.Print("Please enter your username: ")
+	if _, err := fmt.Scanf("%s", &username); err != nil {
+		log.Fatal("Error trying to receive username")
+	}
+
+	conn, err := net.Dial("tcp", ":8080")
+	if err != nil {
+		log.Fatal("Client could not connect to server.")
+	}
+
+	announcement := username + " has connected"
+
+	if _, err := conn.Write([]byte(announcement)); err != nil {
+		log.Fatal("Error when announcing presence to room")
+	}
+
+	for {
+		msg = nil
+		fmt.Printf("%s >", username)
+		fmt.Scanf("%s", &msg)
+
+		if _, err := conn.Write(msg); err != nil {
+			log.Fatal("Error when writting to room")
+		}
+	}
+}
+
+func main() {
+	var server bool
+	flag.BoolVar(&server, "server", false, "Whether to run as server or client (default)")
+
+	flag.Parse()
+
+	if server {
+		runServer()
+	} else {
+		runClient()
 	}
 }
