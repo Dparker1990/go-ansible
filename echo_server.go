@@ -16,11 +16,18 @@ func removeConnection(connections *list.List, connection net.Conn) {
 	}
 }
 
+func zeroBuffer(buf []byte) {
+	for i := range buf {
+		buf[i] = byte(0)
+	}
+}
+
 func handleConnection(connection net.Conn, connections *list.List) {
 	var conn net.Conn
 	msg := make([]byte, 1024)
 
 	for {
+		zeroBuffer(msg)
 		if _, err := connection.Read(msg); err != nil {
 			log.Printf("Connection closed: %s", connection.RemoteAddr().String())
 			connection.Close()
