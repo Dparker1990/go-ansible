@@ -14,7 +14,7 @@ type User struct {
 func (u *User) acquireUsername() {
 	var username string
 	fmt.Print("Please enter your username: ")
-	if _, err := fmt.Scanf("%s", &username); err != nil {
+	if _, err := fmt.Scanln(&username); err != nil {
 		log.Fatal("Error trying to receive username")
 	}
 
@@ -40,12 +40,14 @@ func (u User) SendMessage(msg []byte) {
 }
 
 func (u User) WaitForInput() {
-	msgBuf := make([]byte, 1024)
+	var msg string
 
 	for {
-		msgBuf = nil
-		fmt.Printf("%s >", u.username)
-		fmt.Scanf("%s", &msgBuf)
-		u.SendMessage(msgBuf)
+		fmt.Printf("%s > ", u.username)
+		fmt.Scanln(&msg)
+		if msg == "/quit" {
+			break
+		}
+		u.SendMessage([]byte(msg))
 	}
 }
