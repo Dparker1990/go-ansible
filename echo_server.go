@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
 	"log"
@@ -15,7 +14,7 @@ func listenForMessages(conn net.Conn) {
 			log.Fatal("Could not read from user socket")
 		}
 
-		fmt.Println(string(bytes.TrimSpace(msg)))
+		fmt.Println(string(msg))
 	}
 }
 
