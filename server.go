@@ -20,6 +20,14 @@ func zeroBuffer(buf []byte) {
 	}
 }
 
+func manageIncomingConnections(connChan chan net.Conn) {
+	connections := list.New()
+	for connection := range connChan {
+		connections.PushBack(connection)
+		go handleConnection(connection, connections)
+	}
+}
+
 func writeToConnections(connections *list.List, connection net.Conn, msg []byte) {
 	for c := (*connections).Front(); c != nil; c = c.Next() {
 		conn := c.Value.(net.Conn)
@@ -49,7 +57,9 @@ func handleConnection(connection net.Conn, connections *list.List) {
 }
 
 func acceptConnections(server net.Listener) {
-	connections := list.New()
+	connChan := make(chan net.Conn, 10)
+	go manageIncomingConnections(connChan)
+
 	for {
 		connection, err := server.Accept()
 		if err != nil {
@@ -58,8 +68,6 @@ func acceptConnections(server net.Listener) {
 		}
 		log.Printf("Connection received from: %s", connection.RemoteAddr().String())
 
-		connections.PushBack(connection)
-
-		go handleConnection(connection, connections)
+		connChan <- connection
 	}
 }
