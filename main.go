@@ -9,11 +9,6 @@ import (
 	"net"
 )
 
-func trimNewline(msg string) (trimmedMsg string) {
-	trimmedMsg = msg[0 : len(msg)-1]
-	return
-}
-
 func listenForMessages(conn net.Conn, user User) {
 	buf := bufio.NewReader(conn)
 	for {
