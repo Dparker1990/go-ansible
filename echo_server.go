@@ -1,76 +1,37 @@
 package main
 
 import (
-	"container/list"
+	"bytes"
 	"flag"
+	"fmt"
 	"log"
 	"net"
 )
 
-func removeConnection(connections *list.List, connection net.Conn) {
-	for c := (*connections).Front(); c != nil; c = c.Next() {
-		if c.Value.(net.Conn) == connection {
-			(*connections).Remove(c)
-		}
-	}
-}
-
-func zeroBuffer(buf []byte) {
-	for i := range buf {
-		buf[i] = byte(0)
-	}
-}
-
-func handleConnection(connection net.Conn, connections *list.List) {
-	var conn net.Conn
+func listenForMessages(conn net.Conn) {
 	msg := make([]byte, 1024)
-
 	for {
-		zeroBuffer(msg)
-		if _, err := connection.Read(msg); err != nil {
-			log.Printf("Connection closed: %s", connection.RemoteAddr().String())
-			connection.Close()
-			removeConnection(connections, connection)
-			break
+		if _, err := conn.Read(msg); err != nil {
+			log.Fatal("Could not read from user socket")
 		}
-		log.Printf("Message received: %s", string(msg))
 
-		for c := (*connections).Front(); c != nil; c = c.Next() {
-			conn = c.Value.(net.Conn)
-			if conn != connection {
-				if _, err := conn.Write(msg); err != nil {
-					log.Fatal("Writing failed")
-				}
-			}
-		}
-	}
-}
-
-func runServer() {
-	connections := list.New()
-	server, err := net.Listen("tcp", ":8080")
-	if err != nil {
-		log.Fatal("Could not listen")
-	}
-
-	for {
-		connection, err := server.Accept()
-		if err != nil {
-			log.Fatal("Could not accept connection")
-			continue
-		}
-		log.Printf("Connection received from: %s", connection.RemoteAddr().String())
-
-		connections.PushBack(connection)
-
-		go handleConnection(connection, connections)
+		fmt.Println(string(bytes.TrimSpace(msg)))
 	}
 }
 
 func runClient() {
 	user := User{}
-	user.Connect()
+	conn := user.Connect()
+	go listenForMessages(conn)
 	user.WaitForInput()
+}
+
+func runServer() {
+	server, err := net.Listen("tcp", ":8080")
+	if err != nil {
+		log.Fatal("Could not listen")
+	}
+	acceptConnections(server)
 }
 
 func main() {

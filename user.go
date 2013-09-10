@@ -21,15 +21,16 @@ func (u *User) acquireUsername() {
 	u.username = username
 }
 
-func (u *User) Connect() {
+func (u *User) Connect() (conn net.Conn) {
 	u.acquireUsername()
 	conn, err := net.Dial("tcp", ":8080")
 	if err != nil {
 		log.Fatal("Client could not connect to server.")
 	}
 	u.conn = conn
-
 	u.SendMessage([]byte(u.username + " has entered the room"))
+
+	return
 }
 
 func (u User) SendMessage(msg []byte) {
