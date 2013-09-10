@@ -16,7 +16,7 @@ func removeConnection(connections *list.List, connection net.Conn) {
 
 func zeroBuffer(buf []byte) {
 	for i := range buf {
-		buf[i] = byte(0)
+		buf[i] = 0x00
 	}
 }
 
