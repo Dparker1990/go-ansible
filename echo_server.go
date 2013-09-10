@@ -48,7 +48,7 @@ func runServer() {
 
 func main() {
 	var server bool
-	flag.BoolVar(&server, "server", false, "Whether to run as server or client (default)")
+	flag.BoolVar(&server, "s", false, "Whether to run as server or client (default)")
 
 	flag.Parse()
 
