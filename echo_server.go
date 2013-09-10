@@ -25,7 +25,7 @@ func listenForMessages(conn net.Conn, user User) {
 		terminal.Stdout.ClearLine()
 		terminal.Stdout.Left(50)
 		fmt.Println(trimNewline(msg))
-		fmt.Printf("%s > ", user.username)
+		user.WriteUsername()
 	}
 }
 

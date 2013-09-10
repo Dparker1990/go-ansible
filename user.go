@@ -51,11 +51,15 @@ func (u User) SendMessage(msg []byte) {
 	}
 }
 
+func (u User) WriteUsername() {
+	fmt.Printf("%s > ", u.username)
+}
+
 func (u User) WaitForInput() {
 	buf := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Printf("%s > ", u.username)
+		u.WriteUsername()
 		msg, err := buf.ReadString('\n')
 		if err != nil {
 			log.Fatal("Could not read user input")
