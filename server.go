@@ -32,11 +32,11 @@ func manageIncomingConnections(connChan chan net.Conn) {
 	}
 }
 
-func writeToConnections(connections *list.List, connection net.Conn, msg []byte) {
+func writeToConnections(connections *list.List, connection net.Conn, msg []byte, l int) {
 	for c := (*connections).Front(); c != nil; c = c.Next() {
 		conn := c.Value.(net.Conn)
 		if conn != connection {
-			if _, err := conn.Write(msg); err != nil {
+			if _, err := conn.Write(msg[0:l]); err != nil {
 				log.Fatal("Writing failed")
 			}
 		}
@@ -48,7 +48,8 @@ func handleConnection(connection net.Conn, connections *list.List) {
 
 	for {
 		zeroBuffer(msg)
-		if _, err := connection.Read(msg); err != nil {
+		l, err := connection.Read(msg)
+		if err != nil {
 			log.Printf("Connection closed: %s", connection.RemoteAddr().String())
 			connection.Close()
 			removeConnection(connections, connection)
@@ -56,7 +57,7 @@ func handleConnection(connection net.Conn, connections *list.List) {
 		}
 		log.Printf("Message received: %s", string(msg))
 
-		writeToConnections(connections, connection, msg)
+		writeToConnections(connections, connection, msg, l)
 	}
 }
 
