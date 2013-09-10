@@ -34,6 +34,7 @@ func runClient() {
 	conn := user.Connect()
 	go listenForMessages(conn, user)
 	user.WaitForInput()
+	conn.Close()
 }
 
 func runServer() {

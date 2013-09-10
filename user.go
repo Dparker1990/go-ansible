@@ -8,6 +8,10 @@ import (
 	"os"
 )
 
+const (
+	QUIT string = "/quit\n"
+)
+
 type User struct {
 	username string
 	conn     net.Conn
@@ -43,6 +47,7 @@ func (u User) SendMessage(msg []byte) {
 	message.Write(msg)
 	if err := message.Flush(); err != nil {
 		log.Fatal("Error when writting to room")
+		log.Println("Error when writting to room")
 	}
 }
 
@@ -56,7 +61,8 @@ func (u User) WaitForInput() {
 			log.Fatal("Could not read user input")
 		}
 
-		if msg == "/quit\n" {
+		if msg == QUIT {
+			u.SendMessage([]byte("left the room\n"))
 			break
 		}
 
