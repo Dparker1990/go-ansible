@@ -31,13 +31,17 @@ func (u *User) Connect() net.Conn {
 	if err != nil {
 		log.Fatal("Client could not connect to server.")
 	}
-	u.SendMessage([]byte(u.username + " has entered the room\n"))
+	u.SendMessage([]byte("Entered the room\n"))
 
 	return u.conn
 }
 
 func (u User) SendMessage(msg []byte) {
-	if _, err := u.conn.Write(msg); err != nil {
+	message := bufio.NewWriter(u.conn)
+
+	message.WriteString(u.username + " > ")
+	message.Write(msg)
+	if err := message.Flush(); err != nil {
 		log.Fatal("Error when writting to room")
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"github.com/wsxiaoys/terminal"
 	"log"
 	"net"
 )
@@ -13,7 +14,7 @@ func trimNewline(msg string) (trimmedMsg string) {
 	return
 }
 
-func listenForMessages(conn net.Conn) {
+func listenForMessages(conn net.Conn, user User) {
 	buf := bufio.NewReader(conn)
 	for {
 		msg, err := buf.ReadString('\n')
@@ -21,14 +22,17 @@ func listenForMessages(conn net.Conn) {
 			log.Fatal("Could not read from user socket")
 		}
 
+		terminal.Stdout.ClearLine()
+		terminal.Stdout.Left(50)
 		fmt.Println(trimNewline(msg))
+		fmt.Printf("%s > ", user.username)
 	}
 }
 
 func runClient() {
 	user := User{}
 	conn := user.Connect()
-	go listenForMessages(conn)
+	go listenForMessages(conn, user)
 	user.WaitForInput()
 }
 
