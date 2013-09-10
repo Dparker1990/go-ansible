@@ -30,6 +30,7 @@ func runServer() {
 	if err != nil {
 		log.Fatal("Could not listen")
 	}
+	defer server.Close()
 	acceptConnections(server)
 }
 
