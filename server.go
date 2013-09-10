@@ -15,16 +15,6 @@ func removeConnection(connections *list.List, connection net.Conn) {
 	}
 }
 
-func zeroBuffer(buf []byte) {
-	for i := range buf {
-		if buf[i] == 0x00 {
-			break
-		} else {
-			buf[i] = 0x00
-		}
-	}
-}
-
 func manageIncomingConnections(connChan chan net.Conn) {
 	connections := list.New()
 	for connection := range connChan {
