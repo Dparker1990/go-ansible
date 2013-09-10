@@ -19,7 +19,8 @@ func listenForMessages(conn net.Conn, user User) {
 	for {
 		msg, err := buf.ReadString('\n')
 		if err != nil {
-			log.Fatal("Could not read from user socket")
+			log.Println("Could not read from user socket")
+			log.Fatal(err)
 		}
 
 		terminal.Stdout.ClearLine()
@@ -40,7 +41,8 @@ func runClient() {
 func runServer() {
 	server, err := net.Listen("tcp", ":8080")
 	if err != nil {
-		log.Fatal("Could not listen")
+		log.Println("Could not listen")
+		log.Fatal(err)
 	}
 	defer server.Close()
 	acceptConnections(server)

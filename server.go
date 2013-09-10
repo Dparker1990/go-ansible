@@ -28,7 +28,8 @@ func writeToConnections(connections *list.List, connection net.Conn, msg []byte)
 		conn := c.Value.(net.Conn)
 		if conn != connection {
 			if _, err := conn.Write(msg); err != nil {
-				log.Fatal("Writing failed")
+				log.Println("Writing failed")
+				log.Fatal(err)
 			}
 		}
 	}
@@ -58,7 +59,8 @@ func acceptConnections(server net.Listener) {
 	for {
 		connection, err := server.Accept()
 		if err != nil {
-			log.Fatal("Could not accept connection")
+			log.Println("Could not accept connection")
+			log.Fatal(err)
 			continue
 		}
 		log.Printf("Connection received from: %s", connection.RemoteAddr().String())
