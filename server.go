@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"container/list"
 	"log"
 	"net"
@@ -44,20 +45,19 @@ func writeToConnections(connections *list.List, connection net.Conn, msg []byte)
 }
 
 func handleConnection(connection net.Conn, connections *list.List) {
-	msg := make([]byte, 1024)
+	buf := bufio.NewReader(connection)
 
 	for {
-		zeroBuffer(msg)
-		l, err := connection.Read(msg)
+		msg, err := buf.ReadString('\n')
 		if err != nil {
 			log.Printf("Connection closed: %s", connection.RemoteAddr().String())
 			connection.Close()
 			removeConnection(connections, connection)
 			break
 		}
-		log.Printf("Message received: %s", string(msg))
+		log.Printf("Message received: %s", trimNewline(msg))
 
-		writeToConnections(connections, connection, msg[0:l])
+		writeToConnections(connections, connection, []byte(msg))
 	}
 }
 

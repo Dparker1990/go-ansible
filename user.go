@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"net"
+	"os"
 )
 
 type User struct {
@@ -40,15 +42,19 @@ func (u User) SendMessage(msg []byte) {
 }
 
 func (u User) WaitForInput() {
-	var msg string
+	buf := bufio.NewReader(os.Stdin)
 
 	for {
-		msg = ""
 		fmt.Printf("%s > ", u.username)
-		fmt.Scanln(&msg)
-		if msg == "/quit" {
+		msg, err := buf.ReadString('\n')
+		if err != nil {
+			log.Fatal("Could not read user input")
+		}
+
+		if msg == "/quit\n" {
 			break
 		}
+
 		u.SendMessage([]byte(msg))
 	}
 }

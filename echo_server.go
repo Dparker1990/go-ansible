@@ -1,20 +1,27 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 )
 
+func trimNewline(msg string) (trimmedMsg string) {
+	trimmedMsg = msg[0 : len(msg)-1]
+	return
+}
+
 func listenForMessages(conn net.Conn) {
-	msg := make([]byte, 1024)
+	buf := bufio.NewReader(conn)
 	for {
-		if _, err := conn.Read(msg); err != nil {
+		msg, err := buf.ReadString('\n')
+		if err != nil {
 			log.Fatal("Could not read from user socket")
 		}
 
-		fmt.Println(string(msg))
+		fmt.Println(trimNewline(msg))
 	}
 }
 
