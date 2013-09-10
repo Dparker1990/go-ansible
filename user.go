@@ -30,7 +30,7 @@ func (u *User) Connect() (conn net.Conn) {
 		log.Fatal("Client could not connect to server.")
 	}
 	u.conn = conn
-	u.SendMessage([]byte(u.username + " has entered the room"))
+	u.SendMessage([]byte(u.username + " has entered the room\n"))
 
 	return
 }
