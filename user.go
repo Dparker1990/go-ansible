@@ -43,6 +43,7 @@ func (u User) WaitForInput() {
 	var msg string
 
 	for {
+		msg = ""
 		fmt.Printf("%s > ", u.username)
 		fmt.Scanln(&msg)
 		if msg == "/quit" {
