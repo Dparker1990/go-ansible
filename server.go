@@ -32,11 +32,11 @@ func manageIncomingConnections(connChan chan net.Conn) {
 	}
 }
 
-func writeToConnections(connections *list.List, connection net.Conn, msg []byte, l int) {
+func writeToConnections(connections *list.List, connection net.Conn, msg []byte) {
 	for c := (*connections).Front(); c != nil; c = c.Next() {
 		conn := c.Value.(net.Conn)
 		if conn != connection {
-			if _, err := conn.Write(msg[0:l]); err != nil {
+			if _, err := conn.Write(msg); err != nil {
 				log.Fatal("Writing failed")
 			}
 		}
@@ -57,7 +57,7 @@ func handleConnection(connection net.Conn, connections *list.List) {
 		}
 		log.Printf("Message received: %s", string(msg))
 
-		writeToConnections(connections, connection, msg, l)
+		writeToConnections(connections, connection, msg[0:l])
 	}
 }
 
