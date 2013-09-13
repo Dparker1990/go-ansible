@@ -15,13 +15,10 @@ type User struct {
 }
 
 func (u *User) acquireUsername() {
-	var username string
 	fmt.Print("Please enter your username: ")
-	if _, err := fmt.Scanln(&username); err != nil {
+	if _, err := fmt.Scanln(&u.username); err != nil {
 		log.Fatalf("Error trying to receive username. Failed with: %s", err.Error())
 	}
-
-	u.username = username
 }
 
 func (u *User) Connect() net.Conn {
