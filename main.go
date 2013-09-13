@@ -9,6 +9,13 @@ import (
 	"net"
 )
 
+func writeMessage(msg string, user User) {
+	terminal.Stdout.ClearLine()
+	terminal.Stdout.Left(50)
+	fmt.Println(trimNewline(msg))
+	user.WriteUsername()
+}
+
 func listenForMessages(conn net.Conn, user User) {
 	buf := bufio.NewReader(conn)
 	for {
@@ -18,10 +25,7 @@ func listenForMessages(conn net.Conn, user User) {
 			log.Fatal(err)
 		}
 
-		terminal.Stdout.ClearLine()
-		terminal.Stdout.Left(50)
-		fmt.Println(trimNewline(msg))
-		user.WriteUsername()
+		writeMessage(msg, user)
 	}
 }
 
