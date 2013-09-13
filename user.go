@@ -2,14 +2,11 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"log"
 	"net"
 	"os"
-)
-
-const (
-	QUIT string = "/quit\n"
 )
 
 type User struct {
@@ -55,20 +52,21 @@ func (u User) WriteUsername() {
 }
 
 func (u User) WaitForInput() {
+	QUIT := []byte("/quit\n")
 	buf := bufio.NewReader(os.Stdin)
 
 	for {
 		u.WriteUsername()
-		msg, err := buf.ReadString('\n')
+		msg, err := buf.ReadBytes('\n')
 		if err != nil {
 			log.Fatal("Could not read user input")
 		}
 
-		if msg == QUIT {
+		if bytes.Equal(msg, QUIT) {
 			u.SendMessage([]byte("left the room\n"))
 			break
 		}
 
-		u.SendMessage([]byte(msg))
+		u.SendMessage(msg)
 	}
 }
