@@ -12,6 +12,7 @@ import (
 type User struct {
 	username string
 	conn     net.Conn
+	msgbuf   *bufio.Writer
 }
 
 func (u *User) acquireUsername() {
@@ -23,23 +24,21 @@ func (u *User) acquireUsername() {
 
 func (u *User) Connect() net.Conn {
 	var err error
-
 	u.acquireUsername()
 	u.conn, err = net.Dial("tcp", ":8080")
 	if err != nil {
 		log.Fatalf("Client could not connect to server. Failed with: %s", err.Error())
 	}
+	u.msgbuf = bufio.NewWriter(u.conn)
 	u.SendMessage([]byte("Entered the room\n"))
 
 	return u.conn
 }
 
-func (u User) SendMessage(msg []byte) {
-	message := bufio.NewWriter(u.conn)
-
-	message.WriteString(u.username + " > ")
-	message.Write(msg)
-	if err := message.Flush(); err != nil {
+func (u *User) SendMessage(msg []byte) {
+	u.msgbuf.WriteString(u.username + " > ")
+	u.msgbuf.Write(msg)
+	if err := u.msgbuf.Flush(); err != nil {
 		log.Fatalf("Error when writting to room, failed with: %s", err.Error())
 	}
 }
