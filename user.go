@@ -9,22 +9,24 @@ import (
 	"os"
 )
 
+const maxUsernameLength int = 50
+
 type User struct {
 	username string
 	conn     net.Conn
 	msgbuf   *bufio.Writer
 }
 
-func (u *User) acquireUsername() {
-	fmt.Print("Please enter your username: ")
-	if _, err := fmt.Scanln(&u.username); err != nil {
-		log.Fatalf("Error trying to receive username. Failed with: %s", err.Error())
+func (u *User) SetUsername(username string) error {
+	if len(username) > maxUsernameLength {
+		return fmt.Errorf("Username must be less than 50 characters")
 	}
+	u.username = username
+	return nil
 }
 
 func (u *User) Connect() net.Conn {
 	var err error
-	u.acquireUsername()
 	u.conn, err = net.Dial("tcp", ":8080")
 	if err != nil {
 		log.Fatalf("Client could not connect to server. Failed with: %s", err.Error())

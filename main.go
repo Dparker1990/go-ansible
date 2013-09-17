@@ -9,6 +9,15 @@ import (
 	"net"
 )
 
+func promtForUserName() (username string) {
+	fmt.Print("Please enter your username: ")
+	if _, err := fmt.Scanln(&username); err != nil {
+		log.Fatalf("Error trying to receive username. Failed with: %s", err.Error())
+	}
+
+	return
+}
+
 func writeMessage(msg string, user User) {
 	terminal.Stdout.ClearLine()
 	terminal.Stdout.Left(50)
@@ -29,8 +38,17 @@ func listenForMessages(conn net.Conn, user User) {
 	}
 }
 
+func acquireUsername(user *User) {
+	username := promtForUserName()
+	if err := user.SetUsername(username); err != nil {
+		fmt.Println(err)
+		acquireUsername(user)
+	}
+}
+
 func runClient() {
 	user := User{}
+	acquireUsername(&user)
 	conn := user.Connect()
 	go listenForMessages(conn, user)
 	user.WaitForInput()
