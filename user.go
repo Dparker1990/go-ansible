@@ -29,7 +29,7 @@ func (u *User) Connect() net.Conn {
 	var err error
 	u.conn, err = net.Dial("tcp", ":8080")
 	if err != nil {
-		log.Fatalf("Client could not connect to server. Failed with: %s", err.Error())
+		log.Fatalf("Client could not connect to server. Failed with: %s", err)
 	}
 	u.msgbuf = bufio.NewWriter(u.conn)
 	u.SendMessage([]byte("Entered the room\n"))
@@ -41,7 +41,7 @@ func (u *User) SendMessage(msg []byte) {
 	u.msgbuf.WriteString(u.username + " > ")
 	u.msgbuf.Write(msg)
 	if err := u.msgbuf.Flush(); err != nil {
-		log.Fatalf("Error when writting to room, failed with: %s", err.Error())
+		log.Fatalf("Error when writting to room, failed with: %s", err)
 	}
 }
 
