@@ -50,9 +50,10 @@ func runClient() {
 	user := User{}
 	acquireUsername(&user)
 	conn := user.Connect()
+	defer conn.Close()
+
 	go listenForMessages(conn, user)
 	user.WaitForInput()
-	conn.Close()
 }
 
 func runServer() {
