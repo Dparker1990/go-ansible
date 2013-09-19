@@ -18,9 +18,13 @@ func promtForUserName() (username string) {
 	return
 }
 
-func writeMessage(msg string, user User) {
+func clearCursorPosition() {
 	terminal.Stdout.ClearLine()
 	terminal.Stdout.Left(50)
+}
+
+func writeMessage(msg string, user User) {
+	clearCursorPosition()
 	fmt.Println(trimNewline(msg))
 	user.WriteUsername()
 }
