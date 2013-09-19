@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"github.com/Dparker1990/go-ansible/server"
 	"github.com/Dparker1990/go-ansible/util"
 	"github.com/wsxiaoys/terminal"
 	"log"
@@ -62,22 +63,22 @@ func runClient() {
 }
 
 func runServer() {
-	server, err := net.Listen("tcp", ":8080")
+	s, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Println("Could not listen")
 		log.Fatal(err)
 	}
-	defer server.Close()
-	acceptConnections(server)
+	defer s.Close()
+	server.AcceptConnections(s)
 }
 
 func main() {
-	var server bool
-	flag.BoolVar(&server, "s", false, "Whether to run as server or client (default)")
+	var serve bool
+	flag.BoolVar(&serve, "s", false, "Whether to run as server or client (default)")
 
 	flag.Parse()
 
-	if server {
+	if serve {
 		runServer()
 	} else {
 		runClient()

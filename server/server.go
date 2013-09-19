@@ -1,8 +1,9 @@
-package main
+package server
 
 import (
 	"bufio"
 	"container/list"
+	"github.com/Dparker1990/go-ansible/util"
 	"log"
 	"net"
 )
@@ -46,13 +47,13 @@ func handleConnection(connection net.Conn, connections *list.List) {
 			removeConnection(connections, connection)
 			break
 		}
-		log.Printf("Message received: %s", trimNewline(msg))
+		log.Printf("Message received: %s", util.TrimNewline(msg))
 
 		writeToConnections(connections, connection, []byte(msg))
 	}
 }
 
-func acceptConnections(server net.Listener) {
+func AcceptConnections(server net.Listener) {
 	connChan := make(chan net.Conn, 10)
 	go manageIncomingConnections(connChan)
 
