@@ -5,7 +5,7 @@ import (
 )
 
 func TestAcquireUsername(t *testing.T) {
-	user := User{}
+	user := new(User)
 
 	user.SetUsername("foo")
 	if user.username != "foo" {
@@ -14,7 +14,7 @@ func TestAcquireUsername(t *testing.T) {
 }
 
 func TestUsernameLengthValidation(t *testing.T) {
-	user := User{}
+	user := new(User)
 	username := "aabcdefghijklmnopqssrstuvwxzbcdefghijklmnopqrstuvwxz"
 
 	if err := user.SetUsername(username); err == nil {

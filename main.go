@@ -25,13 +25,13 @@ func clearCursorPosition() {
 	terminal.Stdout.Left(50)
 }
 
-func writeMessage(msg string, user User) {
+func writeMessage(msg string, user *User) {
 	clearCursorPosition()
 	fmt.Println(util.TrimNewline(msg))
 	user.WriteUsername()
 }
 
-func listenForMessages(conn net.Conn, user User) {
+func listenForMessages(conn net.Conn, user *User) {
 	buf := bufio.NewReader(conn)
 	for {
 		msg, err := buf.ReadString('\n')
@@ -53,8 +53,8 @@ func acquireUsername(user *User) {
 }
 
 func runClient() {
-	user := User{}
-	acquireUsername(&user)
+	user := new(User)
+	acquireUsername(user)
 	conn := user.Connect()
 	defer conn.Close()
 
