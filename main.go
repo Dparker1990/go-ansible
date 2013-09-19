@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"github.com/Dparker1990/go-ansible/util"
 	"github.com/wsxiaoys/terminal"
 	"log"
 	"net"
@@ -25,7 +26,7 @@ func clearCursorPosition() {
 
 func writeMessage(msg string, user User) {
 	clearCursorPosition()
-	fmt.Println(trimNewline(msg))
+	fmt.Println(util.TrimNewline(msg))
 	user.WriteUsername()
 }
 
