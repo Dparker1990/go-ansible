@@ -55,6 +55,8 @@ func handleConnection(connection net.Conn, connections *list.List) {
 
 func AcceptConnections(server net.Listener) {
 	connChan := make(chan net.Conn, 10)
+	defer close(connChan)
+
 	go manageIncomingConnections(connChan)
 
 	for {
