@@ -17,12 +17,13 @@ type User struct {
 	msgbuf   *bufio.Writer
 }
 
-func (u *User) SetUsername(username string) error {
+func (u *User) SetUsername(username string) (err error) {
 	if len(username) > maxUsernameLength {
-		return fmt.Errorf("Username must be less than 50 characters")
+		err = fmt.Errorf("Username must be less than 50 characters")
+		return
 	}
 	u.username = username
-	return nil
+	return
 }
 
 func (u *User) Connect() net.Conn {
